@@ -2,10 +2,12 @@ const gridEl = document.querySelector('.grid');
 const miniGridEl = document.querySelector('.mini-grid');
 const scoreEl = document.querySelector('#score');
 const startButtonEl = document.querySelector('#start-button');
+const titleEl = document.querySelector('.title');
+const theEndEl = document.querySelector('.the-end');
+let isGameStarted =  true;
 
 const width = 10; // grid width (number of squares in a row)
 const displayWidth = 4;
-// const displayIndex = 0;
 
 let currentPosition = null;
 let currentRotation = 0;
@@ -15,10 +17,8 @@ let nextShape = null;
 let nextTetromino = null;
 let timerId = null;
 
-// let nextRandom = 0; her
-
-
 startButtonEl.addEventListener('click', onButtonClick);
+document.addEventListener('keydown', control);
 
 // create grid-like container for squares
 for (let i = 0; i < 200; i++) {
@@ -132,8 +132,6 @@ function undrawNext() {
 }
 
 //move tetramino down every second
-
-
 function moveDown() {
     undraw();
     currentPosition += width;
@@ -145,16 +143,13 @@ function moveDown() {
 function freeze() {
     if (currentTetromino.some(index => squares[currentPosition + index + width].classList.contains('taken'))) {
         currentTetromino.forEach(index => squares[currentPosition + index].classList.add('taken'));
-
-        // currentShape = nextRandom; //her
-        // nextRandom = pickRandomShape();
+        addScore();
         currentShape = nextShape;
         nextShape = pickRandomShape();
-        
         makeTetromino(currentShape);
         undrawNext();
         makeNextTetromino(nextShape);
-        // displayShape() //her
+        gameOver();
     }
 }
 
@@ -189,7 +184,6 @@ function moveRight() {
     draw();
 }
 
-
 function rotate() {
     undraw();
     currentRotation += 1;
@@ -202,39 +196,78 @@ function rotate() {
 }
 
 
-//
-
-document.addEventListener('keydown', control);
-
+// controls are clickable only if game has started/ not paused /is not over yet
 function control(e) {
-    if (e.keyCode === 37) {
-        moveLeft();
-    } else if (e.keyCode === 38) {
-        rotate();
-    } else if (e.keyCode === 39) {
-        moveRight();
-    } else if (e.keyCode === 40) {
-        moveDown();
+    if (startButtonEl.innerHTML === "Pause") {
+        if (e.keyCode === 37) {
+            moveLeft();
+        } else if (e.keyCode === 38) {
+            rotate();
+        } else if (e.keyCode === 39) {
+            moveRight();
+        } else if (e.keyCode === 40) {
+            moveDown();
+        }
     }
 }
 
-// her
-// function displayShape() {
-//     displaySquares.forEach(square => {
-//         square.classList.remove('tetromino');
-//     })
-
-//     theDisplayTetrominoes[nextRandom].forEach(index => {
-//         displaySquares[displayIndex + index].classList.add('tetromino');
-//     })
-// }
-
+// iterface has 3 options (start/continue game, pause game and refresh game)
 function onButtonClick() {
-    if (timerId) {
-        clearInterval(timerId);
-        timerId = null;
-    } else {
+    if (!isGameStarted) { // refresh
+        isGameStarted = true;
+        scoreEl.innerHTML = 0;
+        theEndEl.innerHTML = "";
+
+        for (let i = 0; i < 200; i ++) {
+            squares[i].classList.remove('taken');
+            squares[i].classList.remove('tetromino');
+        }
+
+        drawNext();
         draw();
         timerId = setInterval(moveDown, 1000);
+        startButtonEl.textContent = "Pause";
+    } else if (timerId) { // pause
+        clearInterval(timerId);
+        timerId = null;
+        startButtonEl.textContent = "Start";
+    } else { // start, continue
+        draw();
+        timerId = setInterval(moveDown, 1000);
+        startButtonEl.textContent = "Pause";
+    }
+}
+
+// interacts with score. Also cuts and adds rows to grid
+function addScore() {
+    for (let i = 0; i < 199; i += width) {
+        const row = [i, i+1, i+2, i+3, i+4, i+5, i+6, i+7, i+8, i+9];
+
+        if (row.every(index => squares[index].classList.contains('taken'))) {
+            
+            row.forEach(index => {
+                squares[index].classList.remove('taken');
+                squares[index].classList.remove('tetromino');
+            });
+
+            scoreEl.innerHTML = Number(scoreEl.innerHTML) + width;
+            const removedRow = squares.splice(i, width);
+            squares = removedRow.concat(squares);
+
+            squares.forEach(el => gridEl.appendChild(el));
+        }
+    }   
+}
+
+// initiates end of the game
+function gameOver() {
+    if (currentTetromino.some(index => squares[currentPosition + index].classList.contains('taken'))) {
+        startButtonEl.innerHTML = "Start";
+        clearInterval(timerId);
+
+        displaySquares.forEach(el => el.classList.remove('tetromino'));
+
+        theEndEl.innerHTML = "THE END";
+        isGameStarted = false;
     }
 }
