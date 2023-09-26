@@ -5,7 +5,7 @@
 .grid {
     width: 200px;
     height: 400px;
-    background-color: yellow;
+    background-color: lightgray;
     display: flex;
     flex-wrap: wrap;
 }
@@ -17,12 +17,15 @@
 
 .tetromino {
     background-color: blue;
+    border-radius: 5px;
+    -webkit-box-shadow: inset -1px 3px 8px 5px #1F87FF, 2px 5px 16px 0px #0B325E, 31px -31px 25px -3px rgba(0,0,0,0); 
+    box-shadow: inset -1px 3px 8px 5px #1F87FF, 2px 5px 16px 0px #0B325E, 31px -31px 25px -3px rgba(0,0,0,0);
 }
 
 .mini-grid {
     width: 80px;
     height: 80px;
-    background-color: yellow;
+    background-color: lightgray;
     display: flex;
     flex-wrap: wrap;
     margin-left: 50px;
