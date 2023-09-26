@@ -4,10 +4,11 @@ const scoreEl = document.querySelector('#score');
 const startButtonEl = document.querySelector('#start-button');
 const titleEl = document.querySelector('.title');
 const theEndEl = document.querySelector('.the-end');
-let isGameStarted =  true;
+
 
 const width = 10; // grid width (number of squares in a row)
 const displayWidth = 4;
+const backgroundColor = "lightgray"
 
 let currentPosition = null;
 let currentRotation = 0;
@@ -16,6 +17,11 @@ let currentShape = null;
 let nextShape = null;
 let nextTetromino = null;
 let timerId = null;
+let color = null;
+let nextColor = null;
+let className = null;
+let isGameStarted =  true;
+
 
 startButtonEl.addEventListener('click', onButtonClick);
 document.addEventListener('keydown', control);
@@ -28,6 +34,7 @@ for (let i = 0; i < 200; i++) {
 for (let i = 0; i < 10; i++) {
     const divEl = document.createElement('div');
     divEl.classList.add('taken');
+    divEl.classList.add('hidden');
     gridEl.appendChild(divEl);
 }
 
@@ -94,27 +101,89 @@ nextShape = pickRandomShape();
 function makeTetromino(shape) {
     currentPosition = 4;
     currentTetromino = theTetrominoes[shape][currentRotation];
-    draw();
+    draw(currentShape);
 }
 
 function makeNextTetromino(shape) {
     nextTetromino = theDisplayTetrominoes[shape];
-    drawNext();
+    drawNext(nextShape);
 }
 
 makeTetromino(currentShape);
 makeNextTetromino(nextShape);
 
 //draw the tetromino
-function draw() {
+function draw(currentShape) {
     currentTetromino.forEach(index => {
         squares[currentPosition + index].classList.add('tetromino');
     })
+
+    switch (currentShape) {
+        case 0:
+            color = "red";
+            className = "zero";
+            break;
+        case 1:
+            color = "yellow";
+            className = "one";
+            break;
+        case 2:
+            color = "white";
+            className = "two";
+            break;
+        case 3:
+            color = "black";
+            className = "three";
+            break;
+        case 4:
+            color = "green";
+            className = "four";
+            break;                                       
+    }
+
+    gridEl.childNodes.forEach(div => {
+        if (div.classList.contains('tetromino') && !div.classList.contains('taken')) {
+            div.style.backgroundColor = color;
+        }
+    })
 }
 
-function drawNext() {
+function drawNext(nextShape) {
     nextTetromino.forEach(index => {
         displaySquares[index].classList.add('tetromino');
+    })
+
+
+    switch (nextShape) {
+        case 0:
+            nextColor = "red";
+            // className = "zero";
+            break;
+        case 1:
+            nextColor = "yellow";
+            // className = "one";
+            break;
+        case 2:
+            nextColor = "white";
+            // className = "two";
+            break;
+        case 3:
+            nextColor = "black";
+            // className = "three";
+            break;
+        case 4:
+            nextColor = "green";
+            // className = "four";
+            break;                                       
+    }
+
+    miniGridEl.childNodes.forEach(child => {
+        if (child.nodeName === "DIV") {
+            if (child.classList.contains('tetromino')) {
+                child.style.backgroundColor = nextColor;
+            }
+        }
+        
     })
 }
 
@@ -123,11 +192,26 @@ function undraw() {
     currentTetromino.forEach(index => {
         squares[currentPosition + index].classList.remove('tetromino');
     })
+
+    gridEl.childNodes.forEach(div => {
+        if (!div.classList.contains('tetromino') && !div.classList.contains('hidden')) {
+            div.style.backgroundColor = backgroundColor;
+        }
+    })
 }
 
 function undrawNext() {
     nextTetromino.forEach(index => {
         displaySquares[index].classList.remove('tetromino');
+    })
+
+    miniGridEl.childNodes.forEach(child => {
+        if (child.nodeName === "DIV") {
+            if (!child.classList.contains('tetromino')) {
+                child.style.backgroundColor = backgroundColor;
+            }
+        }
+        
     })
 }
 
@@ -135,7 +219,7 @@ function undrawNext() {
 function moveDown() {
     undraw();
     currentPosition += width;
-    draw();
+    draw(currentShape);
     freeze();
 }
 
@@ -143,6 +227,18 @@ function moveDown() {
 function freeze() {
     if (currentTetromino.some(index => squares[currentPosition + index + width].classList.contains('taken'))) {
         currentTetromino.forEach(index => squares[currentPosition + index].classList.add('taken'));
+
+        currentTetromino.forEach(el => {
+            gridEl.childNodes[el].classList.add(`${className}`);
+        })
+
+        // gridEl.childNodes.forEach(el => {
+        //     if (el.classList.contains('taken') && !el.classList.contains('hidden')) {
+        //         el.style.backgroundColor = "orange";
+        //     }
+            
+        // })
+
         addScore();
         currentShape = nextShape;
         nextShape = pickRandomShape();
@@ -166,7 +262,7 @@ function moveLeft() {
         currentPosition += 1;
     }
 
-    draw();
+    draw(currentShape);
 }
 
 function moveRight() {
@@ -181,7 +277,7 @@ function moveRight() {
         currentPosition -= 1;
     }
 
-    draw();
+    draw(currentShape);
 }
 
 function rotate() {
@@ -192,7 +288,7 @@ function rotate() {
     }
 
     currentTetromino = theTetrominoes[currentShape][currentRotation];
-    draw();
+    draw(currentShape);
 }
 
 
@@ -223,8 +319,8 @@ function onButtonClick() {
             squares[i].classList.remove('tetromino');
         }
 
-        drawNext();
-        draw();
+        drawNext(nextShape);
+        draw(currentShape);
         timerId = setInterval(moveDown, 1000);
         startButtonEl.textContent = "Pause";
     } else if (timerId) { // pause
@@ -232,7 +328,7 @@ function onButtonClick() {
         timerId = null;
         startButtonEl.textContent = "Start";
     } else { // start, continue
-        draw();
+        draw(currentShape);
         timerId = setInterval(moveDown, 1000);
         startButtonEl.textContent = "Pause";
     }
@@ -254,7 +350,18 @@ function addScore() {
             const removedRow = squares.splice(i, width);
             squares = removedRow.concat(squares);
 
-            squares.forEach(el => gridEl.appendChild(el));
+            squares.forEach(el => {
+                if (!el.classList.contains('hidden') && !el.classList.contains('tetromino')) {
+                    el.style.backgroundColor = backgroundColor;
+                    el.classList.remove('zero');
+                    el.classList.remove('one');
+                    el.classList.remove('two');
+                    el.classList.remove('three');
+                    el.classList.remove('four');
+                }
+
+                gridEl.appendChild(el);
+            });
         }
     }   
 }

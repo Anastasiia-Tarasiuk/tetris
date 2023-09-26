@@ -16,10 +16,10 @@
 }
 
 .tetromino {
-    background-color: blue;
+    /* background-color: blue; */
     border-radius: 5px;
-    -webkit-box-shadow: inset -1px 3px 8px 5px #1F87FF, 2px 5px 16px 0px #0B325E, 31px -31px 25px -3px rgba(0,0,0,0); 
-    box-shadow: inset -1px 3px 8px 5px #1F87FF, 2px 5px 16px 0px #0B325E, 31px -31px 25px -3px rgba(0,0,0,0);
+    /* -webkit-box-shadow: inset -1px 3px 8px 5px #1F87FF, 2px 5px 16px 0px #0B325E, 31px -31px 25px -3px rgba(0,0,0,0); 
+    box-shadow: inset -1px 3px 8px 5px #1F87FF, 2px 5px 16px 0px #0B325E, 31px -31px 25px -3px rgba(0,0,0,0); */
 }
 
 .mini-grid {
@@ -34,5 +34,25 @@
 .mini-grid div {
     width: 20px;
     height: 20px;
+}
+
+.zero {
+    background-color: red;
+}
+
+.one {
+    background-color: yellow;
+}
+
+.two {
+    background-color: white;
+}
+
+.three {
+    background-color: black;
+}
+
+.four {
+    background-color: green;
 }
 
