@@ -5,7 +5,7 @@
 .grid {
     width: 200px;
     height: 400px;
-    background-color: lightgray;
+    background-color: #183785;
     display: flex;
     flex-wrap: wrap;
 }
@@ -25,7 +25,7 @@
 .mini-grid {
     width: 80px;
     height: 80px;
-    background-color: lightgray;
+    background-color: #183785;
     display: flex;
     flex-wrap: wrap;
     margin-left: 50px;
@@ -37,22 +37,26 @@
 }
 
 .zero {
-    background-color: red;
+    background-color: #fbda1d;
 }
 
 .one {
-    background-color: yellow;
+    background-color: #f78303;
 }
 
 .two {
-    background-color: white;
+    background-color: #3dc932;
 }
 
 .three {
-    background-color: black;
+    background-color: #46cdff;
 }
 
 .four {
-    background-color: green;
+    background-color: #eb0045;
 }
 
+.the-end {
+    color: white;
+    font-size: 13px;
+}

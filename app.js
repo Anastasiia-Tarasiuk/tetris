@@ -5,10 +5,9 @@ const startButtonEl = document.querySelector('#start-button');
 const titleEl = document.querySelector('.title');
 const theEndEl = document.querySelector('.the-end');
 
-
 const width = 10; // grid width (number of squares in a row)
 const displayWidth = 4;
-const backgroundColor = "lightgray"
+const backgroundColor = "#183785"
 
 let currentPosition = null;
 let currentRotation = 0;
@@ -21,7 +20,6 @@ let color = null;
 let nextColor = null;
 let className = null;
 let isGameStarted =  true;
-
 
 startButtonEl.addEventListener('click', onButtonClick);
 document.addEventListener('keydown', control);
@@ -120,23 +118,23 @@ function draw(currentShape) {
 
     switch (currentShape) {
         case 0:
-            color = "red";
+            color = "#fbda1d";
             className = "zero";
             break;
         case 1:
-            color = "yellow";
+            color = "#f78303";
             className = "one";
             break;
         case 2:
-            color = "white";
+            color = "#3dc932";
             className = "two";
             break;
         case 3:
-            color = "black";
+            color = "#46cdff";
             className = "three";
             break;
         case 4:
-            color = "green";
+            color = "#eb0045";
             className = "four";
             break;                                       
     }
@@ -153,27 +151,21 @@ function drawNext(nextShape) {
         displaySquares[index].classList.add('tetromino');
     })
 
-
     switch (nextShape) {
         case 0:
-            nextColor = "red";
-            // className = "zero";
+            nextColor = "#fbda1d";
             break;
         case 1:
-            nextColor = "yellow";
-            // className = "one";
+            nextColor = "#f78303";
             break;
         case 2:
-            nextColor = "white";
-            // className = "two";
+            nextColor = "#3dc932";
             break;
         case 3:
-            nextColor = "black";
-            // className = "three";
+            nextColor = "#46cdff";
             break;
         case 4:
-            nextColor = "green";
-            // className = "four";
+            nextColor = "#eb0045";
             break;                                       
     }
 
@@ -183,7 +175,6 @@ function drawNext(nextShape) {
                 child.style.backgroundColor = nextColor;
             }
         }
-        
     })
 }
 
@@ -232,11 +223,12 @@ function freeze() {
             gridEl.childNodes[el].classList.add(`${className}`);
         })
 
+        //sets taken tetramino's color to orange
+
         // gridEl.childNodes.forEach(el => {
         //     if (el.classList.contains('taken') && !el.classList.contains('hidden')) {
         //         el.style.backgroundColor = "orange";
         //     }
-            
         // })
 
         addScore();
@@ -317,6 +309,7 @@ function onButtonClick() {
         for (let i = 0; i < 200; i ++) {
             squares[i].classList.remove('taken');
             squares[i].classList.remove('tetromino');
+            squares[i].style.backgroundColor = backgroundColor;
         }
 
         drawNext(nextShape);
@@ -372,9 +365,12 @@ function gameOver() {
         startButtonEl.innerHTML = "Start";
         clearInterval(timerId);
 
-        displaySquares.forEach(el => el.classList.remove('tetromino'));
+        displaySquares.forEach(el => {
+            el.classList.remove('tetromino');
+            el.style.backgroundColor = backgroundColor;
+        });
 
-        theEndEl.innerHTML = "THE END";
+        theEndEl.innerHTML = "GAME OVER";
         isGameStarted = false;
     }
 }
